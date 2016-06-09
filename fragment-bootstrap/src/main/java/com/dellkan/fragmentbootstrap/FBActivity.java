@@ -267,7 +267,7 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
                 try {
                     transaction.commit();
                 } catch (IllegalStateException e) {
-                    // Don't want to swap my fragment? Piss off then!
+                    // Abandon ship
                 }
 
                 // Hide keyboard
