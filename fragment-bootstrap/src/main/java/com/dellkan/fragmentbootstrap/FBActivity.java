@@ -49,7 +49,7 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
         mInstance = new WeakReference<FBActivity>(this);
         super.onCreate(savedInstanceState);
 
-        setInitialView();
+        setInitialView(savedInstanceState);
     }
 
     @Override
@@ -409,7 +409,7 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
 
     public abstract Fragment getMenuFragment();
 
-    protected void setInitialView() {
+    protected void setInitialView(Bundle savedInstanceState) {
         // Set main container view
         setContentView(getLayoutContainer());
 
@@ -440,6 +440,8 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
         }
 
         // Set our initial view, the home screen
-        FBActivity.swapFragment(getMainFragmentClass());
+        if (savedInstanceState == null) {
+            FBActivity.swapFragment(getMainFragmentClass());
+        }
     }
 }

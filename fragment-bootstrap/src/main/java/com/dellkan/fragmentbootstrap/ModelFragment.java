@@ -12,7 +12,11 @@ import com.dellkan.robobinding.helpers.model.PresentationModelWrapper;
 
 import java.io.Serializable;
 
+/**
+ * Shorthand fragment that will allow you to set up a typical robobinding-enabled fragment fit for most purposes
+ */
 public abstract class ModelFragment extends OverlayFragment {
+	static final String MODEL_KEY = "model";
 	protected PresentationModelWrapper model;
 	@Nullable
 	@Override
@@ -27,15 +31,11 @@ public abstract class ModelFragment extends OverlayFragment {
 
 	public abstract @LayoutRes int getLayout();
 
-	public boolean updateState() {
-		return false;
-	}
-
 	public PresentationModelWrapper getModel() {
 		if (model == null) {
 			Bundle args = getArguments();
-			if (args != null && args.containsKey("model")) {
-				model = (PresentationModelWrapper) args.getSerializable("model");
+			if (args != null && args.containsKey(MODEL_KEY)) {
+				model = (PresentationModelWrapper) args.getSerializable(MODEL_KEY);
 			}
 		}
 		return model;
@@ -43,16 +43,23 @@ public abstract class ModelFragment extends OverlayFragment {
 
 	public static Bundle getProcessedArgs(PresentationModelWrapper model) {
 		Bundle args = new Bundle();
-		args.putSerializable("model", (Serializable) model);
+		args.putSerializable(MODEL_KEY, (Serializable) model);
 		return args;
 	}
 
 	@Override
-	public void onDestroyView() {
-		Bundle args = getArguments();
-		if (args != null && updateState()) {
-			args.putSerializable("model", (Serializable) getModel());
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		if (getModel() != null) {
+			outState.putSerializable(MODEL_KEY, (Serializable) getModel());
 		}
-		super.onDestroyView();
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		if (savedInstanceState != null && savedInstanceState.containsKey(MODEL_KEY)) {
+			model = (PresentationModelWrapper) savedInstanceState.getSerializable(MODEL_KEY);
+		}
 	}
 }
