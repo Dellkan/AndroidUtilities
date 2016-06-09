@@ -1,12 +1,13 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "com.dellkan.fragmentbootstrap"
-        minSdkVersion 7
+        applicationId "com.dellkan.sample"
+        minSdkVersion 11
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -19,8 +20,37 @@ android {
     }
 }
 
+repositories {
+    jcenter()
+    maven() {
+        name 'SonaType snapshot repository'
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+    maven {
+        url "https://s3.amazonaws.com/repo.commonsware.com"
+    }
+    maven {
+        url  "https://dl.bintray.com/dellkan/maven/"
+    }
+    mavenCentral()
+    mavenLocal()
+}
+
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:design:23.4.0'
+
+    // Robobinding with helpers
+    compile('org.robobinding:robobinding:0.8.13:with-aop-and-dependencies') {
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+    apt "org.robobinding:codegen:0.8.13"
+    compile 'com.dellkan:robobinding-helpers-api:0.4.6'
+    compile 'com.dellkan:robobinding-helpers-common:0.4.6'
+    apt 'com.dellkan:robobinding-helpers-processor:0.4.6'
+
+    compile project(path: ':fragment-bootstrap')
+
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile project(path: ':net')
 }

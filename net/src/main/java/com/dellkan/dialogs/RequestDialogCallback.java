@@ -45,7 +45,7 @@ public class RequestDialogCallback extends RequestCallback {
     }
 
     @Override
-    public void onFailure() {
+    public final void onFailure() {
         super.onFailure();
         onFailure(dialog);
     }

@@ -26,7 +26,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:23.4.0'
+    provided 'com.android.support:appcompat-v7:23.4.0'
+    provided 'com.android.support:design:23.4.0'
 
     compile 'com.balysv.materialmenu:material-menu-toolbar:1.5.4'
     provided ('org.robobinding:robobinding:0.8.12:with-aop-and-dependencies') {

@@ -24,7 +24,7 @@ public abstract class ModelFragment extends OverlayFragment {
 		try {
 			return LayoutBuilder.getViewBinder(inflater.getContext()).inflateAndBindWithoutAttachingToRoot(getLayout(), getModel().getPresentationModel(), container);
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 		return null;
 	}
