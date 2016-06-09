@@ -277,6 +277,20 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
         }
     }
 
+    public static void addFragment(final Fragment fragment, final String tag) {
+        runOnContext(new ContextCallback() {
+            @Override
+            public void context(FBActivity context) {
+                FragmentManager manager = context.getSupportFragmentManager();
+                FragmentTransaction transaction = manager.beginTransaction();
+
+                transaction.add(fragment, tag);
+
+                transaction.commit();
+            }
+        });
+    }
+
     public void enableOverlayToolbar(boolean toggle) {
         mNavIcon.animateState(toggle ? MaterialMenuDrawable.IconState.ARROW : MaterialMenuDrawable.IconState.BURGER);
     }
@@ -372,6 +386,17 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
 
     public static FBActivity getInstance() {
         return mInstance != null ? mInstance.get() : null;
+    }
+
+    public static void runOnContext(ContextCallback callback) {
+        FBActivity activity = getInstance();
+        if (activity != null) {
+            callback.context(activity);
+        }
+    }
+
+    public static interface ContextCallback {
+        public void context(FBActivity context);
     }
 
     private static boolean mShouldClearBackstack = false;

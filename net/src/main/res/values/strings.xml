@@ -1,0 +1,11 @@
+<resources>
+	<string name="app_name">Net</string>
+
+	<string name="sending">Sending…</string>
+
+	<string name="loading">Loading data…</string>
+
+	<string name="error_network">Network error. Please make sure you have a working internet connection to use this feature.</string>
+
+	<string name="ok">OK</string>
+</resources>
