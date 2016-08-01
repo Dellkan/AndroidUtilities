@@ -2,18 +2,26 @@ package com.dellkan.fragmentbootstrap;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.AutoTransition;
+import android.transition.ChangeImageTransform;
+import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
@@ -23,7 +31,9 @@ import com.balysv.materialmenu.extras.toolbar.MaterialMenuIconCompat;
 
 import java.lang.ref.WeakReference;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public abstract class FBActivity<MainFragment extends Fragment> extends AppCompatActivity {
     // Drawer navigation stuff
@@ -195,7 +205,7 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
         swapFragment(fragment, null);
     }
 
-    public static void swapFragment(Fragment fragment, FragmentAnimationCallback aniCallback) {
+    public static void swapFragment(Fragment fragment, FragmentAnimationCallback aniCallback, SharedElement... sharedElements) {
         FBActivity activity = getInstance();
         if (activity != null) {
             // Close the drawer if it's still open
@@ -256,12 +266,27 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
                      Therefore, we explicitly remove all MainFragments we know are duplicates
                      Of course, the better fix would be to make sure duplicate isn't created in the first place
                      */
-                    for (Fragment activeFragment : manager.getFragments()) {
-                        if (getInstance().getMainFragmentClass().isInstance(activeFragment) && !activeFragment.equals(fragment)) {
-                            transaction.remove(activeFragment);
+                    List<Fragment> fragments = manager.getFragments();
+                    if (fragments != null) {
+                        for (Fragment activeFragment : manager.getFragments()) {
+                            if (getInstance().getMainFragmentClass().isInstance(activeFragment) && !activeFragment.equals(fragment)) {
+                                transaction.remove(activeFragment);
+                            }
                         }
                     }
                 }
+
+	            // Set up shared elements
+	            if (sharedElements.length > 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+		            fragment.setSharedElementEnterTransition(new SharedElementTransition());
+		            fragment.setSharedElementReturnTransition(new SharedElementTransition());
+		            for (SharedElement sharedElement : sharedElements) {
+			            if (ViewCompat.getTransitionName(sharedElement.getView()) == null) {
+				            ViewCompat.setTransitionName(sharedElement.getView(), Long.toString(new Random().nextLong(), 32));
+			            }
+			            transaction.addSharedElement(sharedElement.getView(), sharedElement.getName());
+		            }
+	            }
 
                 // Commit the transaction
                 try {
@@ -345,7 +370,6 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
                 if (active != null && active instanceof IHasParent) {
                     try {
                         Fragment fragment = ((IHasParent) active).getHierarchyParent().newInstance();
-                        //fragment.setArguments(((IHasParent) active).getHierarchyParentArgs());
                         swapFragment(fragment);
                         foundParent = true;
                     } catch (InstantiationException e) {
@@ -359,7 +383,7 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
                     swapFragment(getMainFragment());
                 } else if (getMainFragmentClass().isInstance(active)) {
                     Date now = new Date(System.currentTimeMillis());
-                    if (backLastPressed == null || backLastPressed.before(new Date(now.getTime() - 2000))) {
+                    if (backLastPressed == null || backLastPressed.before(new Date(now.getTime() - closeTimeout()))) {
                         backLastPressed = now;
                         Toast.makeText(this, "Are you sure you want to close the application?", Toast.LENGTH_SHORT).show();
                     } else {
@@ -421,10 +445,30 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
         }
     }
 
+	public @ColorRes int getColorValueFromReference(@ColorRes int res, int defaultColor) {
+		TypedValue value = new TypedValue();
+		getResources().getValue(R.color.icon_toolbar, value, true);
+
+		TypedArray attributes = getTheme().obtainStyledAttributes(new int[]{value.data});
+		@ColorRes int color = attributes.getColor(0, defaultColor);
+		attributes.recycle();
+		return color;
+	}
+
     /*
         Customizable
      */
-    public @LayoutRes int getLayoutContainer() {
+
+	/**
+     * Overwrite this if you'd like to change the outer app container view.
+     * Useful if you would like to replace the toolbar with your own creation, set your own parameters,
+     * or would like to remove the menu.
+     *
+     * Remember to either use the same ID references, or also override {@link #setInitialView(Bundle)}
+     *
+     * @return the activity container
+     */
+    protected @LayoutRes int getLayoutContainer() {
         return R.layout.activity_container;
     }
 
@@ -432,19 +476,26 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
 
     public abstract MainFragment getMainFragment();
 
-    public abstract Fragment getMenuFragment();
+    public abstract @Nullable Fragment getMenuFragment();
 
+	/**
+     * When the app initially opens, this runs to set the initial view.
+     * @param savedInstanceState
+     */
     protected void setInitialView(Bundle savedInstanceState) {
         // Set main container view
         setContentView(getLayoutContainer());
 
         // Setup fragments
         try {
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            Fragment menu = getMenuFragment();
+            if (menu != null && findViewById(R.id.menu) != null) {
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-            transaction.replace(R.id.menu, getMenuFragment());
+                transaction.replace(R.id.menu, getMenuFragment());
 
-            transaction.commit();
+                transaction.commit();
+            }
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }
@@ -456,7 +507,7 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
         // Set up drawer toggle button
         this.mDrawer = (DrawerLayout) this.findViewById(R.id.drawer_layout);
 
-        mNavIcon = new MaterialMenuIconCompat(this, Color.WHITE, MaterialMenuDrawable.Stroke.THIN);
+        mNavIcon = new MaterialMenuIconCompat(this, getColorValueFromReference(R.color.icon_toolbar, Color.WHITE), MaterialMenuDrawable.Stroke.THIN);
 
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
@@ -466,7 +517,16 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
 
         // Set our initial view, the home screen
         if (savedInstanceState == null) {
-            FBActivity.swapFragment(getMainFragmentClass());
+            FBActivity.swapFragment(getMainFragment());
         }
+    }
+
+	/**
+     * Customize the timeout used to determine if the app should close when pressing back
+     *
+     * @return timeout in milliseconds. If back is pressed twice within this period of time, the app closes.
+     */
+    protected int closeTimeout() {
+        return 2000;
     }
 }
