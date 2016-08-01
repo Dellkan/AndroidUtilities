@@ -35,4 +35,8 @@ public class ContextFragment extends Fragment {
         }
         return mReference.get();
     }
+
+    public static ContextFragment newInstance() {
+        return new ContextFragment();
+    }
 }

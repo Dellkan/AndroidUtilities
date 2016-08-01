@@ -1,16 +1,35 @@
 package com.dellkan.dialogs;
 
 import com.dellkan.net.BuildConfig;
+import com.dellkan.net.InboundCallbackParser;
+import com.dellkan.net.JSONRequestCallback;
 import com.dellkan.net.R;
-import com.dellkan.net.RequestCallback;
+import com.dellkan.net.Request;
 
-import org.json.JSONException;
+import java.io.InputStream;
 
 /**
- * Identical to {@link com.dellkan.net.RequestCallback} except that it reroutes all callbacks through so you get access to the {@link RequestDialog}
+ * Identical to {@link JSONRequestCallback} except that it reroutes all callbacks through so you get access to the {@link RequestDialog}
  */
-public class RequestDialogCallback extends RequestCallback {
+public class RequestDialogCallback implements InboundCallbackParser {
     private RequestDialog dialog;
+    private InboundCallbackParser callback = new JSONRequestCallback() {
+	    /*
+	        We have to make a couple of redirections in here, since the proxy won't automagically
+	        route to this' onSuccess and onFailure
+	     */
+	    @Override
+	    public void onSuccess() {
+		    super.onSuccess();
+		    RequestDialogCallback.this.onSuccess();
+	    }
+
+	    @Override
+	    public void onFailure() {
+		    super.onFailure();
+		    RequestDialogCallback.this.onFailure();
+	    }
+    };
 
     public RequestDialogCallback() {
     }
@@ -25,29 +44,69 @@ public class RequestDialogCallback extends RequestCallback {
         return this;
     }
 
-    // Reroute through original callbacks
+    @Override
+    public int getResponseCode() {
+        return callback.getResponseCode();
+    }
+
+	@Override
+	public String getResponse() {
+		return callback.getResponse();
+	}
+
+	// Reroute through original callbacks
     @Override
     public final void onStart() {
-        super.onStart();
+        callback.onStart();
         onStart(dialog);
     }
 
     @Override
+    public boolean onStatusCode(int statusCode) {
+        return callback.onStatusCode(statusCode);
+    }
+
+    @Override
     public final void onFinish() {
-        super.onFinish();
+        callback.onFinish();
         onFinish(dialog);
     }
 
     @Override
     public final void onSuccess() {
-        super.onSuccess();
+        callback.onSuccess();
         onSuccess(dialog);
     }
 
     @Override
     public final void onFailure() {
-        super.onFailure();
+        callback.onFailure();
         onFailure(dialog);
+    }
+
+    @Override
+    public String onResponse(InputStream inputStream) {
+        return callback.onResponse(inputStream);
+    }
+
+    @Override
+    public Throwable getException() {
+        return callback.getException();
+    }
+
+    @Override
+    public void setException(Throwable e) {
+        callback.setException(e);
+    }
+
+    @Override
+    public Request getRequest() {
+        return callback.getRequest();
+    }
+
+    @Override
+    public void setRequest(Request request) {
+        callback.setRequest(request);
     }
 
     // Routed callbacks
@@ -82,14 +141,10 @@ public class RequestDialogCallback extends RequestCallback {
     public void onFailure(RequestDialog dialog) {
         dialog.onFailure();
         if (BuildConfig.DEBUG) {
-            if (getException() != null) {
+            if (callback.getException() != null) {
                 dialog.setFinished(String.format("%s\n%s", getRequest().getURL().toString(), getException().getMessage()));
             } else {
-                try {
-                    dialog.setFinished(String.format("%d\n%s", getResponseCode(), getObjectResponse().toString(4)));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                dialog.setFinished(String.format("%d\n%s", getResponseCode(), getResponse()));
             }
         } else {
             dialog.setFinished(R.string.error_network);

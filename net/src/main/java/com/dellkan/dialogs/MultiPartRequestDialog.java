@@ -37,7 +37,7 @@ public final class MultiPartRequestDialog implements RequestDialog {
         callback.setDialog(this);
 
         // Prepare request
-        request.setCallback(callback);
+        request.setInboundCallbackParser(callback);
 
         // Add request
         requests.add(request);

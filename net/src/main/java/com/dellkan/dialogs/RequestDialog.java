@@ -13,9 +13,15 @@ public interface RequestDialog {
     /**
      * Set a message to display within the dialog, as feedback to the user
      * @param message The message you want to show
+     * @see #setMessage(String)
      */
     void setMessage(@StringRes int message);
 
+    /**
+     * Set a message to display within the dialog, as feedback to the user
+     * @param message The message you want to show
+     * @see #setMessage(int)
+     */
     void setMessage(String message);
 
     /**

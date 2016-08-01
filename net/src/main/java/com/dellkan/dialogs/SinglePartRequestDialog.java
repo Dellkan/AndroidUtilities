@@ -37,7 +37,7 @@ public final class SinglePartRequestDialog implements RequestDialog {
 
         Request request = new Request(url, Request.Method.GET);
         request.setParameters(params);
-        request.setCallback(callback);
+        request.setInboundCallbackParser(callback);
         request.start();
 
         this.mDialog.show();
@@ -52,7 +52,7 @@ public final class SinglePartRequestDialog implements RequestDialog {
 
         Request request = new Request(url, Request.Method.POST);
         request.setParameters(params);
-        request.setCallback(callback);
+        request.setInboundCallbackParser(callback);
         request.start();
 
         this.mDialog.show();
