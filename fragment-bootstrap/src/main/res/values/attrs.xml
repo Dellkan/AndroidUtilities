@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<attr name="toolbarCustomStyle" format="reference" />
+	<attr name="toolbarNavigationColor" format="color" />
+
+	<attr name="primaryContainerBackground" format="reference|color" />
+	<attr name="secondaryContainerBackground" format="reference|color" />
+
+	<attr name="button.primary.background" format="color" />
+	<attr name="button.primary.background.pressed" format="color" />
+	<attr name="button.primary.background.disabled" format="color" />
+	<attr name="button.primary.stroke" format="color" />
+	<attr name="button.primary.stroke.disabled" format="color" />
+	<attr name="button.primary.text" format="color" />
+	<attr name="button.primary.text.disabled" format="color" />
+
+	<attr name="button.secondary.background" format="color" />
+	<attr name="button.secondary.background.pressed" format="color" />
+	<attr name="button.secondary.background.disabled" format="color" />
+	<attr name="button.secondary.stroke" format="color" />
+	<attr name="button.secondary.stroke.disabled" format="color" />
+	<attr name="button.secondary.text" format="color" />
+	<attr name="button.secondary.text.disabled" format="color" />
+</resources>

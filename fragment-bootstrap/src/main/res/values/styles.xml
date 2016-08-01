@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- Buttons -->
+	<style name="button">
+		<item name="android:textSize">@dimen/font.small</item>
+		<item name="android:paddingTop">@dimen/padding.half</item>
+		<item name="android:paddingBottom">@dimen/padding.half</item>
+		<item name="android:paddingLeft">@dimen/padding.normal</item>
+		<item name="android:paddingRight">@dimen/padding.normal</item>
+	</style>
+
+	<style name="button.primary">
+		<item name="android:background">@drawable/button_primary</item>
+		<item name="android:textColor">@drawable/button_primary_text</item>
+	</style>
+
+	<style name="button.secondary">
+		<item name="android:background">@drawable/button_secondary</item>
+		<item name="android:textColor">@drawable/button_secondary_text</item>
+	</style>
+
+	<!-- Text -->
+	<style name="text">
+		<item name="android:textSize">@dimen/font.medium</item>
+		<item name="android:textColor">@color/text.primary</item>
+	</style>
+
+	<style name="text.inverted">
+		<item name="android:textColor">@color/text.inverted</item>
+	</style>
+
+	<style name="text.small">
+		<item name="android:textSize">@dimen/font.small</item>
+	</style>
+
+	<style name="text.tiny">
+		<item name="android:textSize">@dimen/font.xsmall</item>
+	</style>
+
+	<style name="text.emphasized">
+		<item name="android:textStyle">bold</item>
+	</style>
+
+	<style name="text.emphasized.inverted">
+		<item name="android:textStyle">bold</item>
+		<item name="android:textColor">@color/text.inverted</item>
+	</style>
+
+	<style name="text.emphasized.small">
+		<item name="android:textSize">@dimen/font.medium_small</item>
+	</style>
+
+	<style name="text.large">
+		<item name="android:textSize">@dimen/font.large</item>
+	</style>
+
+	<style name="text.title">
+		<item name="android:textSize">@dimen/font.xlarge</item>
+		<item name="android:textColor">@color/text.title</item>
+	</style>
+
+	<style name="text.title.secondary">
+		<item name="android:textColor">@color/text.title.secondary</item>
+	</style>
+
+	<style name="text.title.article">
+		<item name="android:textColor">@color/text.title.secondary</item>
+	</style>
+
+	<style name="text.title.medium">
+		<item name="android:textSize">@dimen/font.medium</item>
+	</style>
+
+	<style name="text.title.small">
+		<item name="android:textSize">@dimen/font.medium_small</item>
+		<item name="android:textColor">@color/primary</item>
+	</style>
+
+	<style name="text.title.tiny">
+		<item name="android:textSize">@dimen/font.xsmall</item>
+		<item name="android:textColor">@color/primary</item>
+	</style>
+
+	<style name="text.link">
+		<item name="android:textColor">@color/text.link</item>
+		<item name="android:textColorLink">@color/text.link</item>
+	</style>
+
+	<style name="text.link.emphasized">
+		<item name="android:textColor">@color/text.link.emphasized</item>
+	</style>
+
+	<style name="text.listempty">
+		<item name="android:textSize">@dimen/font.large</item>
+		<item name="android:textColor">@color/text.list.empty</item>
+		<item name="android:shadowColor">@color/text.shadow.weak</item>
+		<item name="android:shadowDx">2</item>
+		<item name="android:shadowDy">2</item>
+		<item name="android:shadowRadius">4</item>
+	</style>
+
+	<style name="text.danger">
+		<item name="android:textColor">@color/text.danger</item>
+	</style>
+
+	<style name="text.actionbarTitle">
+		<!-- All attempts thus far at changing title font has failed, and seems reachable only through the default font set -->
+		<item name="android:textSize">@dimen/title.toolbar</item>
+
+		<item name="android:textColor">@color/text.title.toolbar</item>
+	</style>
+
+	<!-- Containers -->
+	<style name="container">
+		<item name="android:padding">@dimen/padding.normal</item>
+	</style>
+
+	<style name="container.primary">
+		<item name="android:background">?primaryContainerBackground</item>
+	</style>
+
+	<style name="container.primary.small">
+		<item name="android:padding">@dimen/padding.half</item>
+	</style>
+
+	<style name="container.primary.normal">
+		<item name="android:padding">@dimen/padding.normal</item>
+	</style>
+
+	<style name="container.primary.large">
+		<item name="android:padding">@dimen/padding.double</item>
+	</style>
+
+	<style name="container.secondary">
+		<item name="android:background">?secondaryContainerBackground</item>
+	</style>
+
+	<style name="container.secondary.small">
+		<item name="android:padding">@dimen/padding.half</item>
+	</style>
+
+	<style name="container.secondary.normal">
+		<item name="android:padding">@dimen/padding.normal</item>
+	</style>
+
+	<style name="container.secondary.large">
+		<item name="android:padding">@dimen/padding.double</item>
+	</style>
+</resources>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="primary">#da291c</color>
+
+	<color name="text.title">@color/primary</color>
+	<color name="text.title.secondary">#FF000000</color>
+	<color name="text.link">#404040</color>
+	<color name="text.link.emphasized">@color/primary</color>
+	<color name="text.title.toolbar">#FFFFFF</color>
+	<color name="text.primary">#404040</color>
+	<color name="text.hint">#FFa6a6a6</color>
+	<color name="text.error">@color/primary</color>
+	<color name="text.list.empty">#7d404040</color>
+	<color name="text.inverted">#FFFFFF</color>
+	<color name="text.danger">#FFFFFF</color>
+
+	<color name="text.shadow.weak">#644d4d4d</color>
+
+	<color name="icon.tint">@color/text.primary</color>
+	<color name="icon.toolbar">?attr/toolbarNavigationColor</color>
+
+	<color name="container">#FFFFFF</color>
+	<color name="container.secondary">#efe8df</color>
+	<color name="container.inverted">@color/icon.tint</color>
+	<color name="container.danger">#FFFF0000</color>
+	<color name="container.menu">@color/container.secondary</color>
+
+	<color name="button.primary.background">#FF819f2b</color>
+	<color name="button.primary.background.pressed">#FF6b7d21</color>
+	<color name="button.primary.background.disabled">#0affffff</color>
+	<color name="button.primary.stroke">#FFcccccc</color>
+	<color name="button.primary.stroke.disabled">#FFcccccc</color>
+	<color name="button.primary.text">#FFFFFF</color>
+	<color name="button.primary.text.disabled">#FFcccccc</color>
+
+	<color name="button.secondary.background">#FFda291c</color>
+	<color name="button.secondary.background.pressed">#FFda291c</color>
+	<color name="button.secondary.background.disabled">#0affffff</color>
+	<color name="button.secondary.stroke">#FFcccccc</color>
+	<color name="button.secondary.stroke.disabled">#FFcccccc</color>
+	<color name="button.secondary.text">@color/button.primary.text</color>
+	<color name="button.secondary.text.disabled">#FFcccccc</color>
+</resources>

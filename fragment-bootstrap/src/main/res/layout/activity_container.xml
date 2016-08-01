@@ -6,14 +6,16 @@
 	android:layout_height="match_parent">
 
 	<!-- Main content -->
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	              android:orientation="vertical"
-	              android:layout_width="match_parent"
-	              android:layout_height="match_parent">
+	<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
 		<android.support.v7.widget.Toolbar
 			android:id="@+id/toolbar"
 			android:layout_height="wrap_content"
-			android:layout_width="match_parent"/>
+			android:layout_width="match_parent"
+			style="?attr/toolbarCustomStyle" />
 		<FrameLayout
 			android:id="@+id/container"
 			android:layout_width="match_parent"
@@ -21,13 +23,13 @@
 	</LinearLayout>
 
 	<!-- Left slider -->
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	              android:id="@+id/left_drawer"
-	              android:layout_width="240dp"
-	              android:layout_height="match_parent"
-	              android:layout_gravity="start"
-	              android:padding="0dp"
-	              android:orientation="vertical">
+	<LinearLayout
+		android:id="@+id/left_drawer"
+		android:layout_width="240dp"
+		android:layout_height="match_parent"
+		android:layout_gravity="start"
+		android:padding="0dp"
+		android:orientation="vertical">
 		<FrameLayout
 			android:id="@+id/menu"
 			android:layout_width="match_parent"
