@@ -3,6 +3,7 @@ package com.dellkan.sample.fragments;
 import android.os.Bundle;
 
 import com.dellkan.fragmentbootstrap.ModelFragment;
+import com.dellkan.robobinding.helpers.model.PresentationModelWrapper;
 import com.dellkan.sample.R;
 import com.dellkan.sample.viewmodels.Main;
 
@@ -12,11 +13,13 @@ public class MainFragment extends ModelFragment {
         return R.layout.main_fragment;
     }
 
-    public static MainFragment newInstance() {
-        MainFragment fragment = new MainFragment();
-        fragment.setArguments(getProcessedArgs(new Main()));
-
-        return fragment;
+    @Override
+    public PresentationModelWrapper getModel() {
+        PresentationModelWrapper model = super.getModel();
+        if (model == null) {
+            model = Main.get();
+        }
+        return model;
     }
 
     @Override

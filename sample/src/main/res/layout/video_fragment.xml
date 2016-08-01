@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:bind="http://robobinding.org/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:orientation="vertical"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	<ImageView
+		android:layout_width="match_parent"
+		android:layout_height="200dp"
+		android:adjustViewBounds="true"
+		android:transitionName="thumbnail"
+		android:scaleType="centerCrop"
+		bind:fit="centerinside"
+		bind:src="{thumbnail}" />
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:padding="@dimen/padding.normal"
+		android:transitionName="title"
+		tools:text="Test title"
+		bind:text="{title}" />
+	<Button
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:text="TestButton"
+		style="@style/button.primary" />
+</LinearLayout>

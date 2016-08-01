@@ -1,11 +1,44 @@
 <resources>
 
 	<!-- Base application theme. -->
-	<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+	<style name="AppTheme" parent="style/Theme.Design.Light.NoActionBar">
 		<!-- Customize your theme here. -->
 		<item name="colorPrimary">@color/colorPrimary</item>
 		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
 		<item name="colorAccent">@color/colorAccent</item>
+
+		<item name="toolbarCustomStyle">@style/ToolbarCustomTheme</item>
+		<item name="toolbarNavigationColor">@color/navigationIconColor</item>
+
+		<item name="primaryContainerBackground">#FFF</item>
+		<item name="secondaryContainerBackground">#AAA</item>
+
+		<item name="button.primary.background">@color/button.primary.background</item>
+		<item name="button.primary.background.pressed">@color/button.primary.background.pressed</item>
+		<item name="button.primary.background.disabled">@color/button.primary.background.disabled</item>
+		<item name="button.primary.stroke">@color/button.primary.stroke</item>
+		<item name="button.primary.stroke.disabled">@color/button.primary.stroke.disabled</item>
+		<item name="button.primary.text">@color/button.primary.text</item>
+		<item name="button.primary.text.disabled">@color/button.primary.text.disabled</item>
+
+		<item name="button.secondary.background">@color/button.secondary.background</item>
+		<item name="button.secondary.background.pressed">@color/button.secondary.background.pressed</item>
+		<item name="button.secondary.background.disabled">@color/button.secondary.background.disabled</item>
+		<item name="button.secondary.stroke">@color/button.secondary.stroke</item>
+		<item name="button.secondary.stroke.disabled">@color/button.secondary.stroke.disabled</item>
+		<item name="button.secondary.text">@color/button.secondary.text</item>
+		<item name="button.secondary.text.disabled">@color/button.secondary.text.disabled</item>
+	</style>
+
+	<style name="ToolbarCustomTheme" parent="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+		<!-- remove shadow below action bar -->
+		<!-- <item name="android:elevation">0dp</item> -->
+		<!-- Support library compatibility -->
+		<item name="elevation">0dp</item>
+		<!-- Remove shadow below action bar Android < 5.0 -->
+		<item name="android:windowContentOverlay">@null</item>
+		<item name="android:background">?colorPrimary</item>
+		<item name="titleTextAppearance">@style/text.actionbarTitle</item>
 	</style>
 
 </resources>

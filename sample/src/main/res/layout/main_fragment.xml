@@ -2,19 +2,55 @@
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:bind="http://robobinding.org/android"
+	xmlns:tools="http://schemas.android.com/tools"
 	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
-	<android.support.design.widget.TextInputLayout
+	<LinearLayout
+		android:id="@+id/list_empty_video1"
+		android:orientation="vertical"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
-		<android.support.design.widget.TextInputEditText
-			android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:gravity="center"
+		android:divider="@drawable/divider_normal"
+		android:showDividers="middle"
+		android:padding="@dimen/padding.double"
+		android:visibility="gone"
+		tools:visibility="visible">
+		<ProgressBar
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:hint="@string/url_hint" />
-	</android.support.design.widget.TextInputLayout>
-	<Button
+			android:indeterminate="true"
+			bind:visibility="{loadingActive}" />
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/loading"
+			bind:visibility="{loadingActive}" />
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/loading_failed"
+			bind:visibility="{loadingInactive}" />
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Load"
+			bind:onClick="load"
+			bind:visibility="{loadingInactive}"
+			style="@style/button.primary" />
+	</LinearLayout>
+	<android.support.v4.widget.SwipeRefreshLayout
+		android:layout_height="match_parent"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:text="@string/url_send" />
+		bind:refresh="load"
+		bind:refreshing="{loading}">
+		<ListView
+			android:id="@+id/youtube_video_list"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			bind:source="{videoList}"
+		    bind:itemLayout="@layout/list_item_video"
+			bind:emptyView="@id/list_empty_video1" />
+	</android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>
