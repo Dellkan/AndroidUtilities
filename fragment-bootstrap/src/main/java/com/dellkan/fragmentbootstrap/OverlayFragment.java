@@ -14,8 +14,8 @@ public abstract class OverlayFragment extends Fragment implements IHasParent {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            FBActivity.swapFragment(getHierarchyParent());
+        if (item.getItemId() == android.R.id.home && !this.getClass().equals(FBActivity.getInstance().getMainFragmentClass())) {
+            getActivity().onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
