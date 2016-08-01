@@ -62,4 +62,19 @@ public abstract class ModelFragment extends OverlayFragment {
 			model = (PresentationModelWrapper) savedInstanceState.getSerializable(MODEL_KEY);
 		}
 	}
+
+	public static ModelFragment newInstance(Class<? extends ModelFragment> fragmentType, PresentationModelWrapper model) {
+		try {
+			ModelFragment fragment = fragmentType.newInstance();
+
+			fragment.setArguments(getProcessedArgs(model));
+
+			return fragment;
+		} catch (java.lang.InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
