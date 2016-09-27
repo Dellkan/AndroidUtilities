@@ -12,13 +12,16 @@
 		android:layout_width="match_parent"
 		android:layout_height="100dp"
 		android:adjustViewBounds="true"
-		bind:fit="cropcenter"
+		android:scaleType="centerCrop"
+		bind:transitionName="{thumbnailTransitionName}"
+		bind:fit="centerinside"
 	    bind:src="{thumbnail}" />
 	<TextView
 		android:id="@+id/title"
-		android:layout_width="wrap_content"
+		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:padding="@dimen/padding.normal"
 		tools:text="Test title"
+		bind:transitionName="{titleTransitionName}"
 		bind:text="{title}" />
 </LinearLayout>

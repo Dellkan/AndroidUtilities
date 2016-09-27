@@ -22,13 +22,11 @@
 		tools:text="Test title"
 		bind:text="{title}" />
 	<EditText
-		android:id="@+id/input"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:hint="Type text here"
 		bind:text="${input}" />
 	<Button
-		android:id="@+id/submit"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
 		android:text="TestButton"

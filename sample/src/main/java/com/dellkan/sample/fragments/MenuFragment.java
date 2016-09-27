@@ -2,12 +2,11 @@ package com.dellkan.sample.fragments;
 
 import android.os.Bundle;
 
-import com.dellkan.fragmentbootstrap.AbstractMenuFragment;
-import com.dellkan.fragmentbootstrap.ModelFragment;
+import com.dellkan.fragmentbootstrap.fragmentutils.ModelFragmentNoMenu;
 import com.dellkan.sample.R;
 import com.dellkan.sample.viewmodels.Menu;
 
-public class MenuFragment extends AbstractMenuFragment {
+public class MenuFragment extends ModelFragmentNoMenu {
     @Override
     public int getLayout() {
         return R.layout.menu_fragment;

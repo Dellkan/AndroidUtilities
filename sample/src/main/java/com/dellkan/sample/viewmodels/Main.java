@@ -1,13 +1,16 @@
 package com.dellkan.sample.viewmodels;
 
 import com.dellkan.net.Request;
-import com.dellkan.net.JSONRequestCallback;
+import com.dellkan.net.parsers.json.JSONInboundParser;
 import com.dellkan.robobinding.helpers.model.IHasPresentationModel;
 import com.dellkan.robobinding.helpers.model.ListContainer;
 import com.dellkan.robobinding.helpers.model.PresentationModelWrapper;
 import com.dellkan.robobinding.helpers.modelgen.ListItems;
+import com.dellkan.robobinding.helpers.modelgen.PresentationMethod;
 import com.dellkan.robobinding.helpers.modelgen.PresentationModel;
+import com.dellkan.robobinding.helpers.modelgen.SkipMethod;
 import com.dellkan.robobinding.helpers.modelgen.TwoStateGetSet;
+import com.dellkan.sample.URLS;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,7 +27,9 @@ public class Main extends PresentationModelWrapper implements Serializable {
     @TwoStateGetSet
     boolean loading;
 
-	static Main sModel;
+	private static Main sModel;
+
+	@SkipMethod
 	public static Main get() {
 		if (sModel == null) {
 			sModel = new Main();
@@ -36,10 +41,12 @@ public class Main extends PresentationModelWrapper implements Serializable {
         load();
     }
 
+	@PresentationMethod
 	public IHasPresentationModel getCopy() {
 		return getPresentationModel();
 	}
 
+	@PresentationMethod
     public void load() {
 	    if (videoList.size() > 0) {
 		    videoList.getItems().clear();
@@ -53,7 +60,7 @@ public class Main extends PresentationModelWrapper implements Serializable {
         params.put("order", "viewCount");
         params.put("type", "video");
         params.put("key", "AIzaSyDPt5BDDbNARTY48E8epDtqKjcSMvDknhg");
-        Request.newInstance("https://www.googleapis.com/youtube/v3/search", Request.Method.GET, params, new JSONRequestCallback() {
+        Request.newInstance(URLS.YOUTUBE_SEARCH.getURL(), Request.Method.GET, params, new JSONInboundParser() {
             @Override
             public void onStart() {
                 super.onStart();
@@ -80,8 +87,10 @@ public class Main extends PresentationModelWrapper implements Serializable {
                 for (int i = 0; i < items.length(); i++) {
                     JSONObject item = items.optJSONObject(i);
                     if (item != null) {
+	                    JSONObject id = item.optJSONObject("id");
                         JSONObject snippet = item.optJSONObject("snippet");
                         videoList.addItem(new YoutubeVideo(
+		                        id.optString("videoId"),
                                 snippet.optString("title"),
                                 snippet.optJSONObject("thumbnails").optJSONObject("medium").optString("url")
                         ));

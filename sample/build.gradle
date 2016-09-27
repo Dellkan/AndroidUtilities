@@ -30,22 +30,24 @@ repositories {
         url "https://s3.amazonaws.com/repo.commonsware.com"
     }
     maven {
-        url  "https://dl.bintray.com/dellkan/maven/"
+        url "https://dl.bintray.com/dellkan/maven/"
     }
     mavenCentral()
     mavenLocal()
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:24.1.1'
-    compile 'com.android.support:design:24.1.1'
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:design:24.2.1'
 
     // Robobinding with helpers
-    compile('org.robobinding:robobinding:0.8.14:with-aop-and-dependencies')
-    apt "org.robobinding:codegen:0.8.14"
-    compile 'com.dellkan:robobinding-helpers-api:0.4.6'
-    compile 'com.dellkan:robobinding-helpers-common:0.4.6'
-    apt 'com.dellkan:robobinding-helpers-processor:0.4.6'
+    compile('org.robobinding:robobinding:0.8.15-SNAPSHOT:with-aop-and-dependencies')
+    apt "org.robobinding:codegen:0.8.15-SNAPSHOT"
+    compile 'com.dellkan:robobinding-helpers-api:0.5.2-DEV'
+    compile 'com.dellkan:robobinding-helpers-common:0.5.2-DEV'
+    apt 'com.dellkan:robobinding-helpers-processor:0.5.2-DEV'
+
+    compile "com.andkulikov:transitionseverywhere:1.6.9"
 
     compile project(path: ':fragment-bootstrap')
     compile project(path: ':net')

@@ -2,7 +2,7 @@ package com.dellkan.sample.fragments;
 
 import android.os.Bundle;
 
-import com.dellkan.fragmentbootstrap.ModelFragment;
+import com.dellkan.fragmentbootstrap.fragmentutils.ModelFragment;
 import com.dellkan.robobinding.helpers.model.PresentationModelWrapper;
 import com.dellkan.sample.R;
 import com.dellkan.sample.viewmodels.Main;

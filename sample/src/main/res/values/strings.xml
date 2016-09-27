@@ -3,4 +3,7 @@
 
 	<string name="loading_failed">Could not load video list. Try again</string>
 	<string name="loading">Loading…</string>
+
+	<!-- TODO: Remove or change this placeholder text -->
+	<string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
