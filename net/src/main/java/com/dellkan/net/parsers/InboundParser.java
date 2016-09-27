@@ -1,8 +1,10 @@
-package com.dellkan.net;
+package com.dellkan.net.parsers;
+
+import com.dellkan.net.Request;
 
 import java.io.InputStream;
 
-public interface InboundCallbackParser {
+public interface InboundParser {
 	public int getResponseCode();
 	public String getResponse();
 

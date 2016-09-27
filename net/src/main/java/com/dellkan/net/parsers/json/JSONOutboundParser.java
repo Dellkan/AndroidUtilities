@@ -1,9 +1,12 @@
-package com.dellkan.net;
+package com.dellkan.net.parsers.json;
 
 import android.net.Uri;
 import android.util.Base64;
 import android.util.Base64OutputStream;
 import android.webkit.MimeTypeMap;
+
+import com.dellkan.net.Request;
+import com.dellkan.net.parsers.OutboundParser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,7 +23,7 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 
-public class JSONOutboundParser implements OutboundCallbackParser {
+public class JSONOutboundParser implements OutboundParser {
 	public static final String utf = "UTF-8";
 	@Override
 	public URL alterURL(Request request, URL url) {

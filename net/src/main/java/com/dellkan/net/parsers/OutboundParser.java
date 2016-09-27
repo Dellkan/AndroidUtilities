@@ -1,10 +1,12 @@
-package com.dellkan.net;
+package com.dellkan.net.parsers;
+
+import com.dellkan.net.Request;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public interface OutboundCallbackParser {
+public interface OutboundParser {
 	/**
 	 * Runs before the connection is initiated. Use this to modify the URL, for instance, to put GET parameters into the url
 	 * @param request The running request

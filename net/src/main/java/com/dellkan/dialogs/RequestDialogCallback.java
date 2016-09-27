@@ -1,19 +1,19 @@
 package com.dellkan.dialogs;
 
 import com.dellkan.net.BuildConfig;
-import com.dellkan.net.InboundCallbackParser;
-import com.dellkan.net.JSONRequestCallback;
+import com.dellkan.net.parsers.InboundParser;
+import com.dellkan.net.parsers.json.JSONInboundParser;
 import com.dellkan.net.R;
 import com.dellkan.net.Request;
 
 import java.io.InputStream;
 
 /**
- * Identical to {@link JSONRequestCallback} except that it reroutes all callbacks through so you get access to the {@link RequestDialog}
+ * Identical to {@link JSONInboundParser} except that it reroutes all callbacks through so you get access to the {@link RequestDialog}
  */
-public class RequestDialogCallback implements InboundCallbackParser {
+public class RequestDialogCallback implements InboundParser {
     private RequestDialog dialog;
-    private InboundCallbackParser callback = new JSONRequestCallback() {
+    private InboundParser callback = new JSONInboundParser() {
 	    /*
 	        We have to make a couple of redirections in here, since the proxy won't automagically
 	        route to this' onSuccess and onFailure

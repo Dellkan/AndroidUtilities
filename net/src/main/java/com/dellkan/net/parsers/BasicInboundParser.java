@@ -1,4 +1,7 @@
-package com.dellkan.net;
+package com.dellkan.net.parsers;
+
+import com.dellkan.net.BuildConfig;
+import com.dellkan.net.Request;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,10 +11,10 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BasicInboundParser implements InboundCallbackParser {
+public abstract class BasicInboundParser implements InboundParser {
 	private Throwable exception;
-	private static List<InboundCallbackParser> globalHandlers = new ArrayList<>();
-	private List<InboundCallbackParser> localHandlers = new ArrayList<>();
+	private static List<InboundParser> globalHandlers = new ArrayList<>();
+	private List<InboundParser> localHandlers = new ArrayList<>();
 	private boolean isHandler = false;
 	private Request request;
 
@@ -38,11 +41,11 @@ public abstract class BasicInboundParser implements InboundCallbackParser {
 		return rawResponse;
 	}
 
-	public static void addGlobalHandler(InboundCallbackParser callback) {
+	public static void addGlobalHandler(InboundParser callback) {
 		globalHandlers.add(callback);
 	}
 
-	public static void removeGlobalHandler(InboundCallbackParser callback) {
+	public static void removeGlobalHandler(InboundParser callback) {
 		globalHandlers.remove(callback);
 	}
 
@@ -65,7 +68,7 @@ public abstract class BasicInboundParser implements InboundCallbackParser {
 	@Override
 	public void onStart() {
 		if (!isHandler) {
-			for (InboundCallbackParser callback : localHandlers) {
+			for (InboundParser callback : localHandlers) {
 				callback.setRequest(getRequest());
 				callback.onStart();
 			}
@@ -83,7 +86,7 @@ public abstract class BasicInboundParser implements InboundCallbackParser {
 		}
 
 		if (!isHandler) {
-			for (InboundCallbackParser callback : localHandlers) {
+			for (InboundParser callback : localHandlers) {
 				callback.setRequest(getRequest());
 				callback.onStatusCode(statusCode);
 			}
@@ -95,7 +98,7 @@ public abstract class BasicInboundParser implements InboundCallbackParser {
 	@Override
 	public void onFinish() {
 		if (!isHandler) {
-			for (InboundCallbackParser callback : localHandlers) {
+			for (InboundParser callback : localHandlers) {
 				callback.setRequest(getRequest());
 				callback.onFinish();
 			}
@@ -105,7 +108,7 @@ public abstract class BasicInboundParser implements InboundCallbackParser {
 	@Override
 	public void onSuccess() {
 		if (!isHandler) {
-			for (InboundCallbackParser callback : localHandlers) {
+			for (InboundParser callback : localHandlers) {
 				callback.setRequest(getRequest());
 				callback.onSuccess();
 			}
@@ -115,7 +118,7 @@ public abstract class BasicInboundParser implements InboundCallbackParser {
 	@Override
 	public void onFailure() {
 		if (!isHandler) {
-			for (InboundCallbackParser callback : localHandlers) {
+			for (InboundParser callback : localHandlers) {
 				callback.setRequest(getRequest());
 				callback.onFailure();
 			}

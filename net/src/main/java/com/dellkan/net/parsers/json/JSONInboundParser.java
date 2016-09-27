@@ -1,13 +1,13 @@
-package com.dellkan.net;
+package com.dellkan.net.parsers.json;
+
+import com.dellkan.net.parsers.BasicInboundParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import java.io.InputStream;
-
-public class JSONRequestCallback extends BasicInboundParser {
+public class JSONInboundParser extends BasicInboundParser {
     private JSONObject dataObj;
     private JSONArray dataArray;
 

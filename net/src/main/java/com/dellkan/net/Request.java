@@ -5,6 +5,11 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.dellkan.net.parsers.InboundParser;
+import com.dellkan.net.parsers.OutboundParser;
+import com.dellkan.net.parsers.json.JSONOutboundParser;
+import com.dellkan.net.parsers.json.JSONInboundParser;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -25,8 +30,8 @@ public class Request extends AsyncTask<Void, String, Void> {
 
     private URL url;
     private @NonNull Method method = Method.GET;
-    private @NonNull OutboundCallbackParser outboundCallbackParser = new JSONOutboundParser();
-    private @Nullable InboundCallbackParser inboundCallbackParser;
+    private @NonNull OutboundParser outboundParser = new JSONOutboundParser();
+    private @Nullable InboundParser inboundParser;
 
     private @Nullable Map<String, String> headers;
     private @Nullable Map<String, Object> params;
@@ -63,15 +68,15 @@ public class Request extends AsyncTask<Void, String, Void> {
         this.method = method;
     }
 
-    public void setInboundCallbackParser(@Nullable InboundCallbackParser inboundCallbackParser) {
-        this.inboundCallbackParser = inboundCallbackParser;
-        if (inboundCallbackParser != null) {
-            inboundCallbackParser.setRequest(this);
+    public void setInboundParser(@Nullable InboundParser inboundParser) {
+        this.inboundParser = inboundParser;
+        if (inboundParser != null) {
+            inboundParser.setRequest(this);
         }
     }
 
-    public void setOutboundCallbackParser(@NonNull OutboundCallbackParser outboundCallbackParser) {
-        this.outboundCallbackParser = outboundCallbackParser;
+    public void setOutboundParser(@NonNull OutboundParser outboundParser) {
+        this.outboundParser = outboundParser;
     }
 
     public void addHeader(String param, String value) {
@@ -107,8 +112,8 @@ public class Request extends AsyncTask<Void, String, Void> {
 
     @Override
     protected void onPreExecute() {
-        if (inboundCallbackParser != null) {
-            inboundCallbackParser.onStart();
+        if (inboundParser != null) {
+            inboundParser.onStart();
         }
     }
 
@@ -119,7 +124,7 @@ public class Request extends AsyncTask<Void, String, Void> {
             URL url = getURL();
             // If we're dealing with a GET with parameters, we need to deal with those parameters..
             // NOW, before connecting, or even setting up the connection
-            url = outboundCallbackParser.alterURL(this, url);
+            url = outboundParser.alterURL(this, url);
 
             // Open connection
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -142,13 +147,13 @@ public class Request extends AsyncTask<Void, String, Void> {
                 }
             }
 
-            outboundCallbackParser.preConnect(this, connection);
+            outboundParser.preConnect(this, connection);
 
             // Connect
             connection.connect();
 
             // Start output (streaming, post-connect, for POST variables that won't affect the connect URL)
-            outboundCallbackParser.postConnect(this, connection);
+            outboundParser.postConnect(this, connection);
 
             // Start input
             try {
@@ -156,13 +161,13 @@ public class Request extends AsyncTask<Void, String, Void> {
             } catch (IOException e) {
                 responseCode = connection.getResponseCode();
             }
-            if (inboundCallbackParser != null) {
-                shouldReadResponse = inboundCallbackParser.onStatusCode(responseCode);
+            if (inboundParser != null) {
+                shouldReadResponse = inboundParser.onStatusCode(responseCode);
                 if (shouldReadResponse) {
                     if (responseCode >= 400) {
-                        response = inboundCallbackParser.onResponse(connection.getErrorStream());
+                        response = inboundParser.onResponse(connection.getErrorStream());
                     } else {
-                        response = inboundCallbackParser.onResponse(connection.getInputStream());
+                        response = inboundParser.onResponse(connection.getInputStream());
                     }
                 }
             }
@@ -170,8 +175,8 @@ public class Request extends AsyncTask<Void, String, Void> {
             // Close connection
             connection.disconnect();
         } catch (IOException e) {
-            if (inboundCallbackParser != null) {
-                inboundCallbackParser.setException(e);
+            if (inboundParser != null) {
+                inboundParser.setException(e);
             }
             e.printStackTrace();
             // NewRelic.noticeNetworkFailure(url.toString(), method.name(), startTime, new DateTime().getMillis(), e);
@@ -182,8 +187,8 @@ public class Request extends AsyncTask<Void, String, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        if (inboundCallbackParser != null) {
-            inboundCallbackParser.onFinish();
+        if (inboundParser != null) {
+            inboundParser.onFinish();
         }
     }
 
@@ -195,26 +200,26 @@ public class Request extends AsyncTask<Void, String, Void> {
         return this.params;
     }
 
-    public static Request newInstance(@NonNull URL url, @Nullable Map<String, Object> params, @NonNull JSONRequestCallback callback) {
+    public static Request newInstance(@NonNull URL url, @Nullable Map<String, Object> params, @NonNull JSONInboundParser callback) {
         return newInstance(url, Method.POST, params, callback);
     }
 
-    public static Request newInstance(@NonNull String url, @Nullable Map<String, Object> params, @NonNull JSONRequestCallback callback) {
+    public static Request newInstance(@NonNull String url, @Nullable Map<String, Object> params, @NonNull JSONInboundParser callback) {
         return newInstance(url, Method.POST, params, callback);
     }
 
-    public static Request newInstance(@NonNull URL url, @NonNull Method method, @Nullable Map<String, Object> params, @NonNull JSONRequestCallback callback) {
+    public static Request newInstance(@NonNull URL url, @NonNull Method method, @Nullable Map<String, Object> params, @NonNull JSONInboundParser callback) {
         Request request = new Request(url, method);
 
         request.setParameters(params);
-        request.setInboundCallbackParser(callback);
+        request.setInboundParser(callback);
 
         request.start();
 
         return request;
     }
 
-    public static Request newInstance(@NonNull String url, @NonNull Method method, @Nullable Map<String, Object> params, @NonNull JSONRequestCallback callback) {
+    public static Request newInstance(@NonNull String url, @NonNull Method method, @Nullable Map<String, Object> params, @NonNull JSONInboundParser callback) {
         try {
             return newInstance(new URL(url), method, params, callback);
         } catch (MalformedURLException e) {
