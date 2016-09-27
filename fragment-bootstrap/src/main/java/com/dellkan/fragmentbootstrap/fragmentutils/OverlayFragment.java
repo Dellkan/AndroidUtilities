@@ -1,8 +1,10 @@
-package com.dellkan.fragmentbootstrap;
+package com.dellkan.fragmentbootstrap.fragmentutils;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.MenuItem;
+
+import com.dellkan.fragmentbootstrap.FBActivity;
 
 public abstract class OverlayFragment extends Fragment implements IHasParent {
     @Override

@@ -20,18 +20,22 @@ android {
 
 repositories {
     jcenter()
+    maven() {
+        name 'SonaType snapshot repository'
+        url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
     maven {
         url  "https://dl.bintray.com/dellkan/maven/"
     }
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:24.1.1'
-    compile 'com.android.support:design:24.1.1'
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:design:24.2.1'
 
     compile 'com.balysv.materialmenu:material-menu-toolbar:1.5.4'
     provided ('org.robobinding:robobinding:0.8.14:with-aop-and-dependencies')
 
-    provided 'com.dellkan:robobinding-helpers-api:0.4.+'
-    provided 'com.dellkan:robobinding-helpers-common:0.4.+'
+    provided 'com.dellkan:robobinding-helpers-api:0.5.+'
+    provided 'com.dellkan:robobinding-helpers-common:0.5.+'
 }

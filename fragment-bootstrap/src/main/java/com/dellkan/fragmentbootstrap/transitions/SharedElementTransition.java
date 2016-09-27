@@ -1,4 +1,4 @@
-package com.dellkan.fragmentbootstrap;
+package com.dellkan.fragmentbootstrap.transitions;
 
 import android.annotation.TargetApi;
 import android.content.Context;

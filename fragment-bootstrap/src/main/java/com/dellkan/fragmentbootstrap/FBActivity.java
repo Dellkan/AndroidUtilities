@@ -19,8 +19,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.transition.AutoTransition;
-import android.transition.ChangeImageTransform;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
@@ -28,6 +26,13 @@ import android.widget.Toast;
 
 import com.balysv.materialmenu.MaterialMenuDrawable;
 import com.balysv.materialmenu.extras.toolbar.MaterialMenuIconCompat;
+import com.dellkan.fragmentbootstrap.fragmentutils.IAcceptUpdates;
+import com.dellkan.fragmentbootstrap.fragmentutils.IHasParent;
+import com.dellkan.fragmentbootstrap.fragmentutils.IRequire;
+import com.dellkan.fragmentbootstrap.fragmentutils.OverlayFragment;
+import com.dellkan.fragmentbootstrap.transitions.IHasSharedElements;
+import com.dellkan.fragmentbootstrap.transitions.SharedElementTransition;
+import com.dellkan.fragmentbootstrap.transitions.SharedElements;
 
 import java.lang.ref.WeakReference;
 import java.util.Date;
@@ -156,56 +161,111 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
         return null;
     }
 
-    public static void swapFragment(Class<? extends Fragment> fragmentClass) {
-        if (fragmentClass == null) {
-            fragmentClass = getInstance().getMainFragmentClass();
+	/*
+		Swap fragment + onBackPressed hijack
+	 */
+	private Date backLastPressed = null;
+	@Override
+	public void onBackPressed() {
+		if (mDrawer.isDrawerOpen(GravityCompat.START)) {
+			mDrawer.closeDrawer(GravityCompat.START);
+		} else {
+			Fragment active = getActiveFragment();
+
+			// If we're at root, offer to close the app
+			if (getMainFragmentClass().isInstance(active)) {
+				Date now = new Date(System.currentTimeMillis());
+				if (backLastPressed == null || backLastPressed.before(new Date(now.getTime() - closeTimeout()))) {
+					backLastPressed = now;
+					Toast.makeText(this, "Are you sure you want to close the application?", Toast.LENGTH_SHORT).show();
+				} else {
+					try {
+						//noinspection FinalizeCalledExplicitly
+						this.finalize(); // Yeah, we're doing this explicitly
+						System.exit(0);
+					} catch (Throwable throwable) {
+						throwable.printStackTrace();
+					}
+				}
+			}
+			// If not at root, we can either go to root, or to whatever parent
+			// defined by the active fragment
+			else {
+				if (active instanceof IHasParent) {
+					// If we know of a parent, search for that parent explicitly in the backstack log
+					Class<? extends Fragment> parentClass = ((IHasParent) active).getHierarchyParent();
+					swapFragment(parentClass);
+				} else  {
+					swapFragment(getMainFragmentClass());
+				}
+			}
+		}
+	}
+
+    public static boolean swapFragment(Class<? extends Fragment> fragmentClass) {
+        if (fragmentClass == null) { // FIXME: Check if getMainFragmentClass returns the wrong class
+            return false;
         }
-        boolean foundParent = false;
+
         FBActivity activity = getInstance();
-        FragmentManager manager = null;
         if (activity != null && !activity.isFinishing()) {
+	        FragmentManager manager = activity.getSupportFragmentManager();
+	        boolean foundParent = false;
+
             // Hide keyboard
             InputMethodManager inputManager = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow(activity.findViewById(R.id.container).getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
-            manager = activity.getSupportFragmentManager();
-
             // If we're moving to where we were, then stawp.
             Fragment inContainer = manager.findFragmentById(R.id.container);
             if (inContainer != null && inContainer.getClass().equals(fragmentClass)) {
-                return;
+                return false;
             }
 
             // Search for parent
             try {
-                foundParent = manager.popBackStackImmediate(fragmentClass.getName(), 0);
+                if (!(activity.getMainFragmentClass().equals(fragmentClass))) {
+                    foundParent = manager.popBackStackImmediate(fragmentClass.getName(), 0);
+                } else {
+	                foundParent = manager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                }
             } catch (IllegalStateException e) {
                 // manager.popBackstackImmediate has given rise to a variety amount of mandelbugs,
                 // which we're completely unable to debug further at this point due to lack of method of reproduction.
                 // As such, all we can do for now is take random stabs, as well as log when the issue occurs
             }
-        }
-        if (foundParent) {
-            activity.mActiveFragment = new WeakReference<>(manager.findFragmentById(R.id.container));
 
-            // Overlay
-            activity.toggleOverlayToolbar(fragmentClass);
-        } else {
-            try {
-                swapFragment(fragmentClass.newInstance());
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+	        // Parent was found in the backstack, and reused
+	        if (foundParent) {
+		        activity.mActiveFragment = new WeakReference<>(manager.findFragmentById(R.id.container));
+
+		        // Overlay
+		        activity.toggleOverlayToolbar(getActiveFragment());
+
+		        return true;
+	        } else {
+		        //noinspection TryWithIdenticalCatches
+		        try {
+			        swapFragment(fragmentClass.newInstance());
+		        } catch (InstantiationException e) {
+			        e.printStackTrace();
+		        } catch (IllegalAccessException e) {
+			        e.printStackTrace();
+		        }
+	        }
         }
+	    return false;
     }
 
     public static void swapFragment(Fragment fragment) {
         swapFragment(fragment, null);
     }
 
-    public static void swapFragment(Fragment fragment, FragmentAnimationCallback aniCallback, SharedElement... sharedElements) {
+	public static void swapFragment(Fragment fragment, @Nullable FragmentAnimationCallback animationCallback) {
+		swapFragment(fragment, animationCallback, null);
+	}
+
+    public static void swapFragment(Fragment fragment, @Nullable FragmentAnimationCallback animationCallback, @Nullable SharedElements sharedElements) {
         FBActivity activity = getInstance();
         if (activity != null) {
             // Close the drawer if it's still open
@@ -250,11 +310,32 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
                 }
 
                 FragmentTransaction transaction = manager.beginTransaction();
-                if (aniCallback != null) {
-                    aniCallback.setAnimations(transaction);
+
+	            /*
+	                Animations
+	             */
+                if (animationCallback != null) {
+                    animationCallback.setAnimations(transaction);
+                } else {
+	                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 }
 
-                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+	            // Check if we got any SharedElements passed to us
+	            if (sharedElements != null && oldFragment instanceof IHasSharedElements) {
+		            sharedElements = ((IHasSharedElements) oldFragment).getSharedElements();
+	            }
+
+	            if (sharedElements != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+		            fragment.setSharedElementEnterTransition(new SharedElementTransition().setDuration(sharedElements.getDuration()));
+		            fragment.setSharedElementReturnTransition(new SharedElementTransition().setDuration(sharedElements.getDuration()));
+		            for (SharedElements.SharedElement sharedElement : sharedElements.getSharedElements()) {
+			            if (ViewCompat.getTransitionName(sharedElement.getView()) == null) {
+				            ViewCompat.setTransitionName(sharedElement.getView(), Long.toString(new Random().nextLong(), 32));
+			            }
+			            transaction.addSharedElement(sharedElement.getView(), sharedElement.getName());
+		            }
+	            }
+
                 transaction.replace(R.id.container, fragment);
 
                 // Add to backstack, enabling back button
@@ -275,18 +356,6 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
                         }
                     }
                 }
-
-	            // Set up shared elements
-	            if (sharedElements.length > 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-		            fragment.setSharedElementEnterTransition(new SharedElementTransition());
-		            fragment.setSharedElementReturnTransition(new SharedElementTransition());
-		            for (SharedElement sharedElement : sharedElements) {
-			            if (ViewCompat.getTransitionName(sharedElement.getView()) == null) {
-				            ViewCompat.setTransitionName(sharedElement.getView(), Long.toString(new Random().nextLong(), 32));
-			            }
-			            transaction.addSharedElement(sharedElement.getView(), sharedElement.getName());
-		            }
-	            }
 
                 // Commit the transaction
                 try {
@@ -332,76 +401,6 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
                 newFragment instanceof OverlayFragment
                         && !getMainFragmentClass().isInstance(newFragment)
         );
-    }
-
-    private Date backLastPressed = null;
-
-    @Override
-    public void onBackPressed() {
-        if (mDrawer.isDrawerOpen(GravityCompat.START)) {
-            mDrawer.closeDrawer(GravityCompat.START);
-        } else {
-            FragmentManager manager = getSupportFragmentManager();
-            Fragment active = getActiveFragment();
-
-            boolean foundParent = false;
-
-            if (active instanceof IHasParent) {
-                // If we know of a parent, search for that parent explicitly in the backstack log
-                Class<? extends Fragment> parentClass = ((IHasParent) active).getHierarchyParent();
-                if (manager.findFragmentById(R.id.container).getClass().equals(parentClass)) {
-                    // Do nothing. We wanted to move to where we are. (also, wtf?)
-                    // (this will trigger the !foundParent below, replacing instead of reusing our target fragment)
-                } else {
-                    try {
-                        foundParent = manager.popBackStackImmediate(parentClass.getName(), 0);
-                        if (!foundParent) {
-                            clearBackstack();
-                        }
-                    } catch (IllegalStateException e) {
-                        // If we get IllegalStateException, such as #Fragment already added,
-                        // Hopefully we can circumvent the issue by creating new fragment instead
-                    }
-                }
-            }
-
-            if (!foundParent) {
-                // Poor kid didn't have any parents. Let's create one who can adopt it.
-                if (active != null && active instanceof IHasParent) {
-                    try {
-                        Fragment fragment = ((IHasParent) active).getHierarchyParent().newInstance();
-                        swapFragment(fragment);
-                        foundParent = true;
-                    } catch (InstantiationException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                if (!foundParent && !(getMainFragmentClass().getClass().isInstance(active))) { // None would have it; send it along to the orphanage (home)
-                    swapFragment(getMainFragment());
-                } else if (getMainFragmentClass().isInstance(active)) {
-                    Date now = new Date(System.currentTimeMillis());
-                    if (backLastPressed == null || backLastPressed.before(new Date(now.getTime() - closeTimeout()))) {
-                        backLastPressed = now;
-                        Toast.makeText(this, "Are you sure you want to close the application?", Toast.LENGTH_SHORT).show();
-                    } else {
-                        try {
-                            //noinspection FinalizeCalledExplicitly
-                            this.finalize(); // Yeah, we're doing this explicitly
-                            System.exit(0);
-                        } catch (Throwable throwable) {
-                            throwable.printStackTrace();
-                        }
-                    }
-                }
-            } else {
-                // If backstack worked, then we must manually update mActiveFragment because onAttachFragment won't be triggered.
-                mActiveFragment = new WeakReference<>(manager.findFragmentById(R.id.container));
-                toggleOverlayToolbar(mActiveFragment.get());
-            }
-        }
     }
 
     /*

@@ -1,4 +1,4 @@
-package com.dellkan.fragmentbootstrap;
+package com.dellkan.fragmentbootstrap.fragmentutils;
 
 import android.os.Bundle;
 
