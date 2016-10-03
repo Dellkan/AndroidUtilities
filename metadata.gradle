@@ -1,0 +1,21 @@
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+ext {
+    metadata = [
+            groupId   : 'com.dellkan',
+            name      : "Android-Utilities",
+            website   : 'https://github.com/Dellkan/AndroidUtilities',
+
+            user      : properties.getProperty("bintray.user"),
+            key       : properties.getProperty("bintray.apikey"),
+
+            dryRun    : false,
+    ]
+    net = [
+            version   : "0.1.0-DEV",
+    ]
+    fragmentbootstrap = [
+            version   : "0.1.0-DEV",
+    ]
+}

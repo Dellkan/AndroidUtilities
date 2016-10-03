@@ -1,4 +1,7 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release'
+
+def ext = project.rootProject.ext
 
 android {
     compileSdkVersion 24
@@ -8,7 +11,7 @@ android {
         minSdkVersion 9
         targetSdkVersion 24
         versionCode 1
-        versionName "1.0"
+        versionName ext.fragmentbootstrap.version
     }
     buildTypes {
         release {
@@ -27,6 +30,8 @@ repositories {
     maven {
         url  "https://dl.bintray.com/dellkan/maven/"
     }
+    mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -38,4 +43,19 @@ dependencies {
 
     provided 'com.dellkan:robobinding-helpers-api:0.5.+'
     provided 'com.dellkan:robobinding-helpers-common:0.5.+'
+}
+
+publish {
+    groupId = ext.metadata.groupId
+    uploadName = ext.metadata.name
+    website = ext.metadata.website
+
+    publishVersion = ext.fragmentbootstrap.version
+    dryRun = ext.metadata.dryRun
+
+    bintrayUser = ext.metadata.user
+    bintrayKey = ext.metadata.key
+
+    artifactId = 'fragment-bootstrap'
+    desc = 'This library contains the single-activity setup + loads of fragment utilities'
 }
