@@ -29,6 +29,7 @@ import com.balysv.materialmenu.extras.toolbar.MaterialMenuIconCompat;
 import com.dellkan.fragmentbootstrap.fragmentutils.IAcceptUpdates;
 import com.dellkan.fragmentbootstrap.fragmentutils.IHasParent;
 import com.dellkan.fragmentbootstrap.fragmentutils.IRequire;
+import com.dellkan.fragmentbootstrap.fragmentutils.LifecycleDelegateFragment;
 import com.dellkan.fragmentbootstrap.fragmentutils.OverlayFragment;
 import com.dellkan.fragmentbootstrap.transitions.IHasSharedElements;
 import com.dellkan.fragmentbootstrap.transitions.SharedElementTransition;
@@ -37,14 +38,11 @@ import com.dellkan.fragmentbootstrap.transitions.SharedElements;
 import java.lang.ref.WeakReference;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 public abstract class FBActivity<MainFragment extends Fragment> extends AppCompatActivity {
     // Drawer navigation stuff
     private DrawerLayout mDrawer;
-    //private ActionBarDrawerToggle mDrawerToggle;
-    private float mLastTranslate = 0.0f;
 
     // Navigation icon with animations
     MaterialMenuIconCompat mNavIcon;
@@ -73,7 +71,6 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
         super.onConfigurationChanged(newConfig);
     }
 
-    private static String langCode = Locale.getDefault().getLanguage();
     @Override
     public void onResume() {
         mInstance = new WeakReference<FBActivity>(this);
@@ -487,14 +484,20 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
 
         // Setup fragments
         try {
-            Fragment menu = getMenuFragment();
-            if (menu != null && findViewById(R.id.menu) != null) {
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+	        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+	        // Menu
+	        Fragment menu = getMenuFragment();
+	        if (menu != null && findViewById(R.id.menu) != null) {
 
                 transaction.replace(R.id.menu, getMenuFragment());
 
-                transaction.commit();
             }
+
+	        // LifecycleDelegate
+	        transaction.add(new LifecycleDelegateFragment(), LifecycleDelegateFragment.TAG);
+
+	        transaction.commit();
         } catch (IllegalStateException e) {
             e.printStackTrace();
         }

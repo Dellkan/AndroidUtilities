@@ -22,7 +22,11 @@ public abstract class ModelFragment extends OverlayFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		try {
-			return LayoutBuilder.getViewBinder(inflater.getContext()).inflateAndBindWithoutAttachingToRoot(getLayout(), getModel().getPresentationModel(), container);
+			if (container == null) {
+				return LayoutBuilder.getViewBinder(inflater.getContext()).inflateAndBind(getLayout(), getModel().getPresentationModel());
+			} else {
+				return LayoutBuilder.getViewBinder(inflater.getContext()).inflateAndBindWithoutAttachingToRoot(getLayout(), getModel().getPresentationModel(), container);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -57,9 +61,16 @@ public abstract class ModelFragment extends OverlayFragment {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		if (savedInstanceState != null && savedInstanceState.containsKey(MODEL_KEY)) {
 			model = (PresentationModelWrapper) savedInstanceState.getSerializable(MODEL_KEY);
+		}
+		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	public void initLifecycleDelegates() {
+		if (getModel() instanceof LifecycleDelegate) {
+			this.addLifecycleDelegate((LifecycleDelegate) getModel());
 		}
 	}
 
