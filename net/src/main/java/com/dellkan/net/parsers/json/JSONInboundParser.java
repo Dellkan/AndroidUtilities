@@ -35,16 +35,15 @@ public class JSONInboundParser extends BasicInboundParser {
                 } catch (JSONException e) {
                     setException(e);
                     e.printStackTrace();
-                    onFailure();
                 }
             }
 
-            if (getResponseCode() >= 200 && getResponseCode() < 300) {
+            // Trigger callbacks
+            if (getResponseCode() >= 200 && getResponseCode() < 300 && getException() == null) {
                 onSuccess();
             } else {
                 onFailure();
             }
-
         } else {
             onFailure();
         }
