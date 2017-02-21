@@ -32,17 +32,19 @@ public class JSONInboundParser extends BasicInboundParser {
                     Object type = new JSONTokener(token).nextValue();
                     dataObj = type instanceof JSONObject ? new JSONObject(response) : new JSONObject();
                     dataArray = type instanceof JSONArray ? new JSONArray(response) : new JSONArray();
-                    if (getResponseCode() >= 200 && getResponseCode() < 300) {
-                        onSuccess();
-                    } else {
-                        onFailure();
-                    }
                 } catch (JSONException e) {
                     setException(e);
                     e.printStackTrace();
                     onFailure();
                 }
             }
+
+            if (getResponseCode() >= 200 && getResponseCode() < 300) {
+                onSuccess();
+            } else {
+                onFailure();
+            }
+
         } else {
             onFailure();
         }

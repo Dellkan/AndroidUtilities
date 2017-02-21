@@ -5,7 +5,7 @@ def ext = project.rootProject.ext
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "23.0.3"
+    buildToolsVersion "25.0.0"
 
     defaultConfig {
         minSdkVersion 9
@@ -41,8 +41,12 @@ dependencies {
     compile 'com.balysv.materialmenu:material-menu-toolbar:1.5.4'
     provided ('org.robobinding:robobinding:0.8.14:with-aop-and-dependencies')
 
-    provided 'com.dellkan:robobinding-helpers-api:0.5.+'
-    provided 'com.dellkan:robobinding-helpers-common:0.5.+'
+    provided ('com.dellkan:robobinding-helpers-api:0.5.+') {
+        exclude group: 'org.json', module: 'json'
+    }
+    provided ('com.dellkan:robobinding-helpers-common:0.5.+') {
+        exclude group: 'org.json', module: 'json'
+    }
 }
 
 publish {

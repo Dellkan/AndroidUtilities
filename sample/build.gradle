@@ -3,7 +3,7 @@ apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "23.0.3"
+    buildToolsVersion "25.0.0"
 
     defaultConfig {
         applicationId "com.dellkan.sample"
@@ -43,9 +43,15 @@ dependencies {
     // Robobinding with helpers
     compile('org.robobinding:robobinding:0.8.15-SNAPSHOT:with-aop-and-dependencies')
     apt "org.robobinding:codegen:0.8.15-SNAPSHOT"
-    compile 'com.dellkan:robobinding-helpers-api:0.5.2-DEV'
-    compile 'com.dellkan:robobinding-helpers-common:0.5.2-DEV'
-    apt 'com.dellkan:robobinding-helpers-processor:0.5.2-DEV'
+    compile ('com.dellkan:robobinding-helpers-api:0.5.2-DEV') {
+        exclude group: 'org.json', module: 'json'
+    }
+    compile ('com.dellkan:robobinding-helpers-common:0.5.2-DEV') {
+        exclude group: 'org.json', module: 'json'
+    }
+    apt ('com.dellkan:robobinding-helpers-processor:0.5.2-DEV') {
+        exclude group: 'org.json', module: 'json'
+    }
 
     compile "com.andkulikov:transitionseverywhere:1.6.9"
 
