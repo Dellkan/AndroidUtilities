@@ -13,7 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
-public interface LifecycleDelegate {
+public interface LifeCycleDelegate {
 	public void setInitialSavedState(Fragment.SavedState state);
 	public void onActivityResult(int requestCode, int resultCode, Intent data);
 	public void onInflate(Context context, AttributeSet attrs, Bundle savedInstanceState);

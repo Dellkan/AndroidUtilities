@@ -6,7 +6,7 @@ import android.view.MenuItem;
 
 import com.dellkan.fragmentbootstrap.FBActivity;
 
-public abstract class OverlayFragment extends LifecycleDelegateFragment implements IHasParent {
+public abstract class OverlayFragment extends LifeCycleDelegateFragment implements IHasParent {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

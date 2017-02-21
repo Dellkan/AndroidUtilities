@@ -15,7 +15,7 @@ import android.view.View;
 
 import com.dellkan.robobinding.helpers.model.PresentationModelWrapper;
 
-public abstract class LifecycleDelegateViewmodel extends PresentationModelWrapper implements LifecycleDelegate {
+public abstract class LifeCycleDelegateViewmodel extends PresentationModelWrapper implements LifeCycleDelegate {
 	@Override
 	public void setInitialSavedState(Fragment.SavedState state) {
 

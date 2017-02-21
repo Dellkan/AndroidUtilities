@@ -29,7 +29,7 @@ import com.balysv.materialmenu.extras.toolbar.MaterialMenuIconCompat;
 import com.dellkan.fragmentbootstrap.fragmentutils.IAcceptUpdates;
 import com.dellkan.fragmentbootstrap.fragmentutils.IHasParent;
 import com.dellkan.fragmentbootstrap.fragmentutils.IRequire;
-import com.dellkan.fragmentbootstrap.fragmentutils.LifecycleDelegateFragment;
+import com.dellkan.fragmentbootstrap.fragmentutils.LifeCycleDelegateFragment;
 import com.dellkan.fragmentbootstrap.fragmentutils.OverlayFragment;
 import com.dellkan.fragmentbootstrap.transitions.IHasSharedElements;
 import com.dellkan.fragmentbootstrap.transitions.SharedElementTransition;
@@ -494,8 +494,8 @@ public abstract class FBActivity<MainFragment extends Fragment> extends AppCompa
 
             }
 
-	        // LifecycleDelegate
-	        transaction.add(new LifecycleDelegateFragment(), LifecycleDelegateFragment.TAG);
+	        // LifeCycleDelegate
+	        transaction.add(new LifeCycleDelegateFragment(), LifeCycleDelegateFragment.TAG);
 
 	        transaction.commit();
         } catch (IllegalStateException e) {

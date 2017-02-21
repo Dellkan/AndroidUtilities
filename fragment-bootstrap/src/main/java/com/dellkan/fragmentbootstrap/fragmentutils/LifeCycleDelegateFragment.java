@@ -20,20 +20,20 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LifecycleDelegateFragment extends AppCompatDialogFragment implements LifecycleDelegate {
-	public static final String TAG = LifecycleDelegateFragment.class.toString();
-	private List<WeakReference<LifecycleDelegate>> delegates = new ArrayList<>();
+public class LifeCycleDelegateFragment extends AppCompatDialogFragment implements LifeCycleDelegate {
+	public static final String TAG = LifeCycleDelegateFragment.class.toString();
+	private List<WeakReference<LifeCycleDelegate>> delegates = new ArrayList<>();
 
-	public static void addGlobalLifecycleDelegate(LifecycleDelegate delegate) {
+	public static void addGlobalLifecycleDelegate(LifeCycleDelegate delegate) {
 		getInstance().delegates.add(new WeakReference<>(delegate));
 	}
 
-	public void addLifecycleDelegate(LifecycleDelegate delegate) {
-		this.delegates.add(new WeakReference<LifecycleDelegate>(delegate));
+	public void addLifecycleDelegate(LifeCycleDelegate delegate) {
+		this.delegates.add(new WeakReference<LifeCycleDelegate>(delegate));
 	}
 
-	public static LifecycleDelegateFragment getInstance() {
-		return (LifecycleDelegateFragment) FBActivity.getInstance().getSupportFragmentManager().findFragmentByTag(TAG);
+	public static LifeCycleDelegateFragment getInstance() {
+		return (LifeCycleDelegateFragment) FBActivity.getInstance().getSupportFragmentManager().findFragmentByTag(TAG);
 	}
 
 	public void initLifecycleDelegates() {
@@ -46,9 +46,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 
 		initLifecycleDelegates();
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onCreate(savedInstanceState);
 				}
@@ -60,9 +60,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void setInitialSavedState(SavedState state) {
 		super.setInitialSavedState(state);
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.setInitialSavedState(state);
 				}
@@ -74,9 +74,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onActivityResult(requestCode, resultCode, data);
 				}
@@ -88,9 +88,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onInflate(Context context, AttributeSet attrs, Bundle savedInstanceState) {
 		super.onInflate(context, attrs, savedInstanceState);
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onInflate(context, attrs, savedInstanceState);
 				}
@@ -102,9 +102,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onAttachFragment(Fragment childFragment) {
 		super.onAttachFragment(childFragment);
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onAttachFragment(childFragment);
 				}
@@ -116,9 +116,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onAttach(Context context) {
 		super.onAttach(context);
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onAttach(context);
 				}
@@ -130,9 +130,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onViewCreated(view, savedInstanceState);
 				}
@@ -144,9 +144,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onActivityCreated(savedInstanceState);
 				}
@@ -158,9 +158,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
 		super.onViewStateRestored(savedInstanceState);
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onViewStateRestored(savedInstanceState);
 				}
@@ -172,9 +172,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onStart() {
 		super.onStart();
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onStart();
 				}
@@ -186,9 +186,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onResume() {
 		super.onResume();
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onResume();
 				}
@@ -200,9 +200,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onSaveInstanceState(outState);
 				}
@@ -214,9 +214,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onConfigurationChanged(newConfig);
 				}
@@ -228,9 +228,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onPause() {
 		super.onPause();
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onPause();
 				}
@@ -242,9 +242,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onStop() {
 		super.onStop();
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onStop();
 				}
@@ -256,9 +256,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onLowMemory() {
 		super.onLowMemory();
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onLowMemory();
 				}
@@ -270,9 +270,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onDestroyView() {
 		super.onDestroyView();
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onDestroyView();
 				}
@@ -284,9 +284,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onDestroy() {
 		super.onDestroy();
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onDestroy();
 				}
@@ -298,9 +298,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onDetach() {
 		super.onDetach();
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onDetach();
 				}
@@ -312,9 +312,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onCreateOptionsMenu(menu, inflater);
 				}
@@ -326,9 +326,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onPrepareOptionsMenu(menu);
 				}
@@ -340,9 +340,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onDestroyOptionsMenu() {
 		super.onDestroyOptionsMenu();
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onDestroyOptionsMenu();
 				}
@@ -355,9 +355,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 		boolean value = super.onOptionsItemSelected(item);
 
 		if (!value) {
-			for (WeakReference<LifecycleDelegate> delegate : delegates) {
+			for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 				if (delegate != null) {
-					LifecycleDelegate callback = delegate.get();
+					LifeCycleDelegate callback = delegate.get();
 					if (callback != null) {
 						if(callback.onOptionsItemSelected(item)) {
 							return true;
@@ -374,9 +374,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onOptionsMenuClosed(Menu menu) {
 		super.onOptionsMenuClosed(menu);
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onOptionsMenuClosed(menu);
 				}
@@ -388,9 +388,9 @@ public class LifecycleDelegateFragment extends AppCompatDialogFragment implement
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 
-		for (WeakReference<LifecycleDelegate> delegate : delegates) {
+		for (WeakReference<LifeCycleDelegate> delegate : delegates) {
 			if (delegate != null) {
-				LifecycleDelegate callback = delegate.get();
+				LifeCycleDelegate callback = delegate.get();
 				if (callback != null) {
 					callback.onCreateContextMenu(menu, v, menuInfo);
 				}

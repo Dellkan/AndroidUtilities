@@ -69,8 +69,8 @@ public abstract class ModelFragment extends OverlayFragment {
 
 	@Override
 	public void initLifecycleDelegates() {
-		if (getModel() instanceof LifecycleDelegate) {
-			this.addLifecycleDelegate((LifecycleDelegate) getModel());
+		if (getModel() instanceof LifeCycleDelegate) {
+			this.addLifecycleDelegate((LifeCycleDelegate) getModel());
 		}
 	}
 
