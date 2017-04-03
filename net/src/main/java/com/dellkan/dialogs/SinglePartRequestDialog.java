@@ -37,7 +37,7 @@ public final class SinglePartRequestDialog implements RequestDialog {
 
         Request request = new Request(url, Request.Method.GET);
         request.setParameters(params);
-        request.setInboundParser(callback);
+        request.setRequestCallback(callback);
         request.start();
 
         this.mDialog.show();
@@ -52,7 +52,8 @@ public final class SinglePartRequestDialog implements RequestDialog {
 
         Request request = new Request(url, Request.Method.POST);
         request.setParameters(params);
-        request.setInboundParser(callback);
+        request.setHeaders(headers);
+        request.setRequestCallback(callback);
         request.start();
 
         this.mDialog.show();
@@ -93,12 +94,4 @@ public final class SinglePartRequestDialog implements RequestDialog {
     public void dismiss() {
         this.mDialog.dismiss();
     }
-
-    /*
-        Request lifecycle
-    */
-    @Override public void onStart() {}
-    @Override public void onFinish() {}
-    @Override public void onSuccess() {}
-    @Override public void onFailure() {}
 }

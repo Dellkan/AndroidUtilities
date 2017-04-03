@@ -31,7 +31,7 @@ public class Request extends AsyncTask<Void, String, Void> {
     private URL url;
     private @NonNull Method method = Method.GET;
     private @NonNull OutboundParser outboundParser = new JSONOutboundParser();
-    private @Nullable InboundParser inboundParser;
+    private @Nullable RequestCallback requestCallback;
 
     private @Nullable Map<String, String> headers;
     private @Nullable Map<String, Object> params;
@@ -68,10 +68,10 @@ public class Request extends AsyncTask<Void, String, Void> {
         this.method = method;
     }
 
-    public void setInboundParser(@Nullable InboundParser inboundParser) {
-        this.inboundParser = inboundParser;
-        if (inboundParser != null) {
-            inboundParser.setRequest(this);
+    public void setRequestCallback(@Nullable RequestCallback requestCallback) {
+        this.requestCallback = requestCallback;
+        if (requestCallback != null) {
+            requestCallback.getParser().setRequest(this);
         }
     }
 
@@ -84,6 +84,17 @@ public class Request extends AsyncTask<Void, String, Void> {
             headers = new HashMap<>();
         }
         headers.put(param, value);
+    }
+
+    public void setHeaders(@Nullable Map<String, String> headers) {
+        if (this.headers == null) {
+            this.headers = new HashMap<>();
+        }
+        this.headers.clear();
+
+        if (headers != null) {
+            this.headers.putAll(headers);
+        }
     }
 
     public void addParameter(String param, Object value) {
@@ -112,8 +123,8 @@ public class Request extends AsyncTask<Void, String, Void> {
 
     @Override
     protected void onPreExecute() {
-        if (inboundParser != null) {
-            inboundParser.onStart();
+        if (requestCallback != null) {
+            requestCallback.onStart();
         }
     }
 
@@ -141,6 +152,7 @@ public class Request extends AsyncTask<Void, String, Void> {
             connection.setRequestProperty("Accept", "application/json");
 
             // Start output)
+            // TODO: Move this to outboundParser
             if (this.headers != null) {
                 for (Map.Entry<String, String> entry : headers.entrySet()) {
                     connection.setRequestProperty(entry.getKey(), entry.getValue());
@@ -161,13 +173,14 @@ public class Request extends AsyncTask<Void, String, Void> {
             } catch (IOException e) {
                 responseCode = connection.getResponseCode();
             }
-            if (inboundParser != null) {
-                shouldReadResponse = inboundParser.onStatusCode(responseCode);
+            if (requestCallback != null) {
+                InboundParser parser = requestCallback.getParser();
+                shouldReadResponse = parser.onStatusCode(responseCode);
                 if (shouldReadResponse) {
                     if (responseCode >= 400) {
-                        response = inboundParser.onResponse(connection.getErrorStream());
+                        response = parser.onResponse(connection.getErrorStream());
                     } else {
-                        response = inboundParser.onResponse(connection.getInputStream());
+                        response = parser.onResponse(connection.getInputStream());
                     }
                 }
             }
@@ -175,8 +188,8 @@ public class Request extends AsyncTask<Void, String, Void> {
             // Close connection
             connection.disconnect();
         } catch (IOException e) {
-            if (inboundParser != null) {
-                inboundParser.setException(e);
+            if (requestCallback != null) {
+                requestCallback.getParser().setException(e);
             }
             e.printStackTrace();
             // NewRelic.noticeNetworkFailure(url.toString(), method.name(), startTime, new DateTime().getMillis(), e);
@@ -187,8 +200,8 @@ public class Request extends AsyncTask<Void, String, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        if (inboundParser != null) {
-            inboundParser.onFinish();
+        if (requestCallback != null) {
+            requestCallback.onFinish();
         }
     }
 
@@ -200,26 +213,26 @@ public class Request extends AsyncTask<Void, String, Void> {
         return this.params;
     }
 
-    public static Request newInstance(@NonNull URL url, @Nullable Map<String, Object> params, @NonNull JSONInboundParser callback) {
+    public static Request newInstance(@NonNull URL url, @Nullable Map<String, Object> params, @NonNull RequestCallback callback) {
         return newInstance(url, Method.POST, params, callback);
     }
 
-    public static Request newInstance(@NonNull String url, @Nullable Map<String, Object> params, @NonNull JSONInboundParser callback) {
+    public static Request newInstance(@NonNull String url, @Nullable Map<String, Object> params, @NonNull RequestCallback callback) {
         return newInstance(url, Method.POST, params, callback);
     }
 
-    public static Request newInstance(@NonNull URL url, @NonNull Method method, @Nullable Map<String, Object> params, @NonNull JSONInboundParser callback) {
+    public static Request newInstance(@NonNull URL url, @NonNull Method method, @Nullable Map<String, Object> params, @NonNull RequestCallback callback) {
         Request request = new Request(url, method);
 
         request.setParameters(params);
-        request.setInboundParser(callback);
+        request.setRequestCallback(callback);
 
         request.start();
 
         return request;
     }
 
-    public static Request newInstance(@NonNull String url, @NonNull Method method, @Nullable Map<String, Object> params, @NonNull JSONInboundParser callback) {
+    public static Request newInstance(@NonNull String url, @NonNull Method method, @Nullable Map<String, Object> params, @NonNull RequestCallback callback) {
         try {
             return newInstance(new URL(url), method, params, callback);
         } catch (MalformedURLException e) {

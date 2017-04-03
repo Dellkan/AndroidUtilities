@@ -36,12 +36,4 @@ public interface RequestDialog {
      * Dismiss the dialog
      */
     void dismiss();
-
-    /*
-        Request lifecycle
-     */
-    public void onStart();
-    public void onFinish();
-    public void onSuccess();
-    public void onFailure();
 }

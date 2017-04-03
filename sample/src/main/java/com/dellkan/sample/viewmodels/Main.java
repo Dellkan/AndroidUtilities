@@ -1,6 +1,7 @@
 package com.dellkan.sample.viewmodels;
 
 import com.dellkan.net.Request;
+import com.dellkan.net.RequestCallback;
 import com.dellkan.net.parsers.json.JSONInboundParser;
 import com.dellkan.robobinding.helpers.model.IHasPresentationModel;
 import com.dellkan.robobinding.helpers.model.ListContainer;
@@ -60,7 +61,7 @@ public class Main extends PresentationModelWrapper implements Serializable {
         params.put("order", "viewCount");
         params.put("type", "video");
         params.put("key", "AIzaSyDPt5BDDbNARTY48E8epDtqKjcSMvDknhg");
-        Request.newInstance(URLS.YOUTUBE_SEARCH.getURL(), Request.Method.GET, params, new JSONInboundParser() {
+        Request.newInstance(URLS.YOUTUBE_SEARCH.getURL(), Request.Method.GET, params, new RequestCallback<JSONInboundParser>(new JSONInboundParser()) {
             @Override
             public void onStart() {
                 super.onStart();
@@ -83,7 +84,7 @@ public class Main extends PresentationModelWrapper implements Serializable {
 	            videoList.getItems().clear();
 
                 // Parse response
-                JSONArray items = getObjectResponse().optJSONArray("items");
+                JSONArray items = getParser().getObjectResponse().optJSONArray("items");
                 for (int i = 0; i < items.length(); i++) {
                     JSONObject item = items.optJSONObject(i);
                     if (item != null) {

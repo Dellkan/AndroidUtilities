@@ -7,6 +7,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import java.io.InputStream;
+
 public class JSONInboundParser extends BasicInboundParser {
     private JSONObject dataObj;
     private JSONArray dataArray;
@@ -21,11 +23,12 @@ public class JSONInboundParser extends BasicInboundParser {
     /*
         Callbacks
      */
-    public void onFinish() {
-        super.onFinish();
+
+    @Override
+    public String onResponse(InputStream inputStream) {
+        String response = super.onResponse(inputStream);
 
         if (getException() == null) {
-            String response = getResponse();
             if (response != null && !response.isEmpty()) {
                 String token = response.substring(0, 1) + response.substring(response.length() - 1);
                 try {
@@ -37,23 +40,8 @@ public class JSONInboundParser extends BasicInboundParser {
                     e.printStackTrace();
                 }
             }
-
-            // Trigger callbacks
-            if (getResponseCode() >= 200 && getResponseCode() < 300 && getException() == null) {
-                onSuccess();
-            } else {
-                onFailure();
-            }
-        } else {
-            onFailure();
         }
-    }
 
-    public void onSuccess() {
-
-    }
-
-    public void onFailure() {
-
+        return response;
     }
 }

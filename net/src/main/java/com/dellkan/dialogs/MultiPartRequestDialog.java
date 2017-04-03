@@ -37,7 +37,7 @@ public final class MultiPartRequestDialog implements RequestDialog {
         callback.setDialog(this);
 
         // Prepare request
-        request.setInboundParser(callback);
+        request.setRequestCallback(callback);
 
         // Add request
         requests.add(request);
@@ -90,16 +90,6 @@ public final class MultiPartRequestDialog implements RequestDialog {
     public void dismiss() {
         this.mDialog.dismiss();
     }
-
-    /*
-        Request lifecycle
-     */
-    @Override public void onStart() {}
-    @Override public void onFinish() {}
-    @Override public void onSuccess() {
-        startRequests();
-    }
-    @Override public void onFailure() {}
 
     /**
         Utility callback

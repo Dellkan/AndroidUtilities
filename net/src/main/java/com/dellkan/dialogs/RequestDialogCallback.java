@@ -1,6 +1,9 @@
 package com.dellkan.dialogs;
 
+import android.support.annotation.NonNull;
+
 import com.dellkan.net.BuildConfig;
+import com.dellkan.net.RequestCallback;
 import com.dellkan.net.parsers.InboundParser;
 import com.dellkan.net.parsers.json.JSONInboundParser;
 import com.dellkan.net.R;
@@ -11,102 +14,38 @@ import java.io.InputStream;
 /**
  * Identical to {@link JSONInboundParser} except that it reroutes all callbacks through so you get access to the {@link RequestDialog}
  */
-public class RequestDialogCallback implements InboundParser {
+public class RequestDialogCallback<T extends InboundParser> extends RequestCallback<T> {
     private RequestDialog dialog;
-    private InboundParser callback = new JSONInboundParser() {
-	    /*
-	        We have to make a couple of redirections in here, since the proxy won't automagically
-	        route to this' onSuccess and onFailure
-	     */
-	    @Override
-	    public void onSuccess() {
-		    super.onSuccess();
-		    RequestDialogCallback.this.onSuccess();
-	    }
 
-	    @Override
-	    public void onFailure() {
-		    super.onFailure();
-		    RequestDialogCallback.this.onFailure();
-	    }
-    };
-
-    public RequestDialogCallback() {
+    public RequestDialogCallback(@NonNull T parser) {
+        super(parser);
     }
 
-    public RequestDialogCallback(RequestDialog dialog) {
+    void setDialog(RequestDialog dialog) {
         this.dialog = dialog;
     }
-
-    // Setters
-    public RequestDialogCallback setDialog(RequestDialog dialog) {
-        this.dialog = dialog;
-        return this;
-    }
-
-    @Override
-    public int getResponseCode() {
-        return callback.getResponseCode();
-    }
-
-	@Override
-	public String getResponse() {
-		return callback.getResponse();
-	}
 
 	// Reroute through original callbacks
     @Override
     public final void onStart() {
-        callback.onStart();
         onStart(dialog);
     }
 
     @Override
-    public boolean onStatusCode(int statusCode) {
-        return callback.onStatusCode(statusCode);
-    }
-
-    @Override
     public final void onFinish() {
-        callback.onFinish();
         onFinish(dialog);
+
+        super.onFinish();
     }
 
     @Override
     public final void onSuccess() {
-        callback.onSuccess();
         onSuccess(dialog);
     }
 
     @Override
     public final void onFailure() {
-        callback.onFailure();
         onFailure(dialog);
-    }
-
-    @Override
-    public String onResponse(InputStream inputStream) {
-        return callback.onResponse(inputStream);
-    }
-
-    @Override
-    public Throwable getException() {
-        return callback.getException();
-    }
-
-    @Override
-    public void setException(Throwable e) {
-        callback.setException(e);
-    }
-
-    @Override
-    public Request getRequest() {
-        return callback.getRequest();
-    }
-
-    @Override
-    public void setRequest(Request request) {
-        callback.setRequest(request);
     }
 
     // Routed callbacks
@@ -117,21 +56,18 @@ public class RequestDialogCallback implements InboundParser {
      */
     public void onStart(RequestDialog dialog) {
         dialog.setMessage(R.string.sending);
-        dialog.onStart();
     }
 
     /**
      * See {@link #onFinish()}
      */
     public void onFinish(RequestDialog dialog) {
-        dialog.onFinish();
     }
 
     /**
      * See {@link #onSuccess()}
      */
     public void onSuccess(RequestDialog dialog) {
-        dialog.onSuccess();
     }
 
     /**
@@ -139,10 +75,9 @@ public class RequestDialogCallback implements InboundParser {
      * @param dialog A reference to the SinglePartRequestDialog
      */
     public void onFailure(RequestDialog dialog) {
-        dialog.onFailure();
         if (BuildConfig.DEBUG) {
-            if (callback.getException() != null) {
-                dialog.setFinished(String.format("%s\n%s", getRequest().getURL().toString(), getException().getMessage()));
+            if (getException() != null) {
+                dialog.setFinished(String.format("%s\n%s", getParser().getRequest().getURL().toString(), getException().getMessage()));
             } else {
                 dialog.setFinished(String.format("%d\n%s", getResponseCode(), getResponse()));
             }

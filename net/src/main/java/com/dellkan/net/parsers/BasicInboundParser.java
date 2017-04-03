@@ -13,17 +13,11 @@ import java.util.List;
 
 public abstract class BasicInboundParser implements InboundParser {
 	private Throwable exception;
-	private static List<InboundParser> globalHandlers = new ArrayList<>();
-	private List<InboundParser> localHandlers = new ArrayList<>();
 	private boolean isHandler = false;
 	private Request request;
 
 	private int responseCode;
 	private String rawResponse;
-
-	public BasicInboundParser() {
-		this.localHandlers.addAll(globalHandlers);
-	}
 
 	public Request getRequest() {
 		return request;
@@ -41,18 +35,6 @@ public abstract class BasicInboundParser implements InboundParser {
 		return rawResponse;
 	}
 
-	public static void addGlobalHandler(InboundParser callback) {
-		globalHandlers.add(callback);
-	}
-
-	public static void removeGlobalHandler(InboundParser callback) {
-		globalHandlers.remove(callback);
-	}
-
-	public void clearGlobalHandlers() {
-		globalHandlers.clear();
-	}
-
 	public Throwable getException() {
 		return exception;
 	}
@@ -66,16 +48,6 @@ public abstract class BasicInboundParser implements InboundParser {
 	 */
 
 	@Override
-	public void onStart() {
-		if (!isHandler) {
-			for (InboundParser callback : localHandlers) {
-				callback.setRequest(getRequest());
-				callback.onStart();
-			}
-		}
-	}
-
-	@Override
 	public boolean onStatusCode(int statusCode) {
 		this.responseCode = statusCode;
 
@@ -85,44 +57,7 @@ public abstract class BasicInboundParser implements InboundParser {
 			}
 		}
 
-		if (!isHandler) {
-			for (InboundParser callback : localHandlers) {
-				callback.setRequest(getRequest());
-				callback.onStatusCode(statusCode);
-			}
-		}
-
 		return true;
-	}
-
-	@Override
-	public void onFinish() {
-		if (!isHandler) {
-			for (InboundParser callback : localHandlers) {
-				callback.setRequest(getRequest());
-				callback.onFinish();
-			}
-		}
-	}
-
-	@Override
-	public void onSuccess() {
-		if (!isHandler) {
-			for (InboundParser callback : localHandlers) {
-				callback.setRequest(getRequest());
-				callback.onSuccess();
-			}
-		}
-	}
-
-	@Override
-	public void onFailure() {
-		if (!isHandler) {
-			for (InboundParser callback : localHandlers) {
-				callback.setRequest(getRequest());
-				callback.onFailure();
-			}
-		}
 	}
 
 	@Override
